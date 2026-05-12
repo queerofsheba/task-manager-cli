@@ -1,10 +1,11 @@
 import json
 import os
 import datetime as dt
+import argparse
 
 # Task Object Structure
 # {
-#   "id": 001 #three digit integer
+#   "id": 1 #integer
 #   "name": "Task objective" #string
 #   "completed": False #boolean
 #   "created": "2026-05-01 09:00:00" #timestamp
@@ -71,7 +72,35 @@ def view_tasks(tasks):
             print(f'{count:<3}{id:0>3}  {name:20}{status:5}')
             count += 1
 
+def main():
+    parser = argparse.ArgumentParser(description="Task Manager CLI")
+    subparsers = parser.add_subparsers(dest='command', help="Available commands")
+
+    # List subcommand
+    parser_list = subparsers.add_parser("list", help="View all tasks")
+
+    # Add task subcommand
+    parser_add = subparsers.add_parser("add", help="Add task")
+    parser_add.add_argument("task_name", type=str, help="Name of new task")
+
+    # Parse arguments
+    args = parser.parse_args()
+
+    print(f"Command received: {args.command}")  # DEBUG
+
+    if args.command == "list":
+        print("Calling view_tasks...")  # DEBUG
+        # invoke the view_tasks method
+        tasks = load_tasks()
+        print(f"Loaded {len(tasks)} tasks")  # DEBUG
+        view_tasks(tasks)
+    elif args.command == "add":
+        print(f"Calling add_task with: {args.task_name}")
+        # invoke the add_tasks method
+        tasks = load_tasks()
+        add_task(tasks, args.task_name)
+    else:
+        parser.print_help()
 
 if __name__ == "__main__":
-    tasks = load_tasks()
-    view_tasks(tasks)
+    main()
