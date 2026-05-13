@@ -36,11 +36,7 @@ def add_task(tasks, task_name):
     if len(tasks) == 0:
         new_task["id"] = 1
     else:
-        max_id = 0
-        for task in tasks:
-            if task["id"] > max_id:
-                max_id = task["id"]
-        new_task["id"] = max_id + 1
+        new_task["id"] = max(task["id"] for task in tasks) + 1
     new_task["name"] = task_name
     new_task["completed"] = False
     new_task["created"] = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -72,6 +68,32 @@ def view_tasks(tasks):
             print(f'{count:<3}{id:0>3}  {name:20}{status:5}')
             count += 1
 
+def complete_task(tasks, task_id):
+    found = False
+    for task in tasks:
+        if task['id'] == task_id:
+            found = True
+            task['completed'] = True
+            print(f'Task {task_id} marked complete!')
+            save_tasks(tasks)
+            return
+    if found == False:
+        print(f'Error: Task {task_id} not found')
+
+def delete_task(tasks, task_id):
+    if len(tasks) == 0:
+        print('No tasks found')
+    found = False
+    for task in tasks:
+        if task['id'] == task_id:
+            found = True
+            tasks.remove(task)
+            print(f'Task {task_id} removed')
+            save_tasks(tasks)
+            return
+    if found == False:
+        print(f'Error: Task {task_id} not found')
+
 def main():
     parser = argparse.ArgumentParser(description="Task Manager CLI")
     subparsers = parser.add_subparsers(dest='command', help="Available commands")
@@ -80,25 +102,36 @@ def main():
     parser_list = subparsers.add_parser("list", help="View all tasks")
 
     # Add task subcommand
-    parser_add = subparsers.add_parser("add", help="Add task")
+    parser_add = subparsers.add_parser("add", help="Add new task")
     parser_add.add_argument("task_name", type=str, help="Name of new task")
+
+    # Complete task command
+    parser_complete = subparsers.add_parser("complete", help="Mark task as completed")
+    parser_complete.add_argument("task_id", type=int, help="ID of task to mark as completed")
+
+    # Delete task command
+    parser_delete = subparsers.add_parser("delete", help="Delete task")
+    parser_delete.add_argument("task_id", type=int, help="ID of task to delete")
 
     # Parse arguments
     args = parser.parse_args()
 
-    print(f"Command received: {args.command}")  # DEBUG
-
     if args.command == "list":
-        print("Calling view_tasks...")  # DEBUG
-        # invoke the view_tasks method
+        # Call the view_tasks method
         tasks = load_tasks()
-        print(f"Loaded {len(tasks)} tasks")  # DEBUG
         view_tasks(tasks)
     elif args.command == "add":
-        print(f"Calling add_task with: {args.task_name}")
-        # invoke the add_tasks method
+        # Call the add_tasks method
         tasks = load_tasks()
         add_task(tasks, args.task_name)
+    elif args.command == "complete":
+        # Call the complete_task method
+        tasks = load_tasks()
+        complete_task(tasks, args.task_id)
+    elif args.command == "delete":
+        # Call the delete_task method
+        tasks = load_tasks()
+        delete_task(tasks, args.task_id)
     else:
         parser.print_help()
 
