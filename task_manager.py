@@ -31,6 +31,10 @@ def save_tasks(tasks):
         json.dump(tasks, tasklist, indent=2)
 
 def add_task(tasks, task_name):
+    # Check for empty string
+    if task_name.strip() == "":
+        print(f'Error: Input required.')
+        return
     # Create new task dictionary item
     new_task = {}
     if len(tasks) == 0:
@@ -52,9 +56,9 @@ def add_task(tasks, task_name):
 
 def view_tasks(tasks):
     if len(tasks) == 0:
-        print('No tasks found')
+        print('No tasks found.')
     else:
-        print(f'{"#":3}{"ID":3}  {"Task":20}{"Status":5}')
+        print(f'{"#":4}{"ID":3} | {"Tasks":25}')
         print("-" * 35)
         count = 1
         for task in tasks:
@@ -62,37 +66,44 @@ def view_tasks(tasks):
             name = task["name"]
             status = task["completed"]
             if status:
-                status = "DONE"
+                status = "[\u2713]"
             else:
-                status = "----"
-            print(f'{count:<3}{id:0>3}  {name:20}{status:5}')
+                status = "[ ]"
+            print(f'{count}.  {id:0>3} | {name:20}{status:^5}')
             count += 1
 
 def complete_task(tasks, task_id):
+    if task_id <= 0:
+        print('Error: Task ID must be positive, non-zero integer.')
+        return
     found = False
     for task in tasks:
         if task['id'] == task_id:
             found = True
             task['completed'] = True
-            print(f'Task {task_id} marked complete!')
+            print(f'Task with ID {task_id} marked complete!')
             save_tasks(tasks)
             return
     if found == False:
-        print(f'Error: Task {task_id} not found')
+        print(f'Error: Task with ID {task_id} not found. Use \'list\' to see all tasks.')
 
 def delete_task(tasks, task_id):
+    if task_id <= 0:
+        print('Error: Task ID must be positive, non-zero integer.')
+        return
     if len(tasks) == 0:
-        print('No tasks found')
+        print('Error: No tasks found')
+        return
     found = False
     for task in tasks:
         if task['id'] == task_id:
             found = True
             tasks.remove(task)
-            print(f'Task {task_id} removed')
+            print(f'Task with ID {task_id} removed')
             save_tasks(tasks)
             return
     if found == False:
-        print(f'Error: Task {task_id} not found')
+        print(f'Error: Task with ID {task_id} not found. Use \'list\' to see all tasks.')
 
 def main():
     parser = argparse.ArgumentParser(description="Task Manager CLI")
