@@ -3,9 +3,6 @@
 A command-line task manager tool built with Python. Manage your tasks efficiently 
 from the terminal with persistent JSON storage.
 
-[DEMO]
-*Demo coming soon*
-
 ## Features
 
 + Add tasks with assigned IDs and automatic timestamps
