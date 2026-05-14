@@ -3,21 +3,6 @@ import os
 import datetime as dt
 import argparse
 
-# Task Object Structure
-# {
-#   "id": 1 #integer
-#   "name": "Task objective" #string
-#   "completed": False #boolean
-#   "created": "2026-05-01 09:00:00" #timestamp
-# }
-
-# Task List Structure
-# [
-#   {task1 dictionary}
-#   {task2 dictionary}
-#   {task3 dictionary}
-# ]
-
 def load_tasks():
     if os.path.exists('tasks.json'):
         with open('tasks.json', 'r') as tasklist:
